@@ -6,13 +6,14 @@ import { mockNews } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
   const article = await api
-    .newsArticle(params.slug)
-    .catch(() => mockNews.find((a) => a.slug === params.slug) ?? null);
+    .newsArticle(slug)
+    .catch(() => mockNews.find((a) => a.slug === slug) ?? null);
 
   if (!article) return { title: "Article not found" };
 
@@ -32,9 +33,10 @@ function formatDate(dateStr: string | null) {
 }
 
 export default async function NewsArticlePage({ params }: Props) {
+  const { slug } = await params;
   const article = await api
-    .newsArticle(params.slug)
-    .catch(() => mockNews.find((a) => a.slug === params.slug) ?? null);
+    .newsArticle(slug)
+    .catch(() => mockNews.find((a) => a.slug === slug) ?? null);
 
   if (!article) notFound();
 
