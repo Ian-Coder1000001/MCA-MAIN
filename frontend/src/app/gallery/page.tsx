@@ -383,8 +383,7 @@ export default function GalleryPage() {
                             <video
                               src={item.url}
                               controls
-                              preload="metadata"   // load only metadata (poster frame), not full video
-                              loading="lazy"       // defer until near viewport (Chrome 76+)
+                              preload="metadata"
                               style={{
                                 position: "absolute",
                                 inset: 0,
