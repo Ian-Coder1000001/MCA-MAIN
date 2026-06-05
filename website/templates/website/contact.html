@@ -1,0 +1,50 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+<h1>Contact Hon. Elphas Shilosio</h1>
+
+{% if success %}
+<div class="alert alert-success">
+    Message sent successfully!
+</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-danger">
+    Please fill in all fields.
+</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        class="form-control mb-3"
+        required
+    >
+
+    <input
+        type="email"
+        name="email"
+        placeholder="Your Email"
+        class="form-control mb-3"
+        required
+    >
+
+    <textarea
+        name="message"
+        placeholder="Your Message"
+        class="form-control mb-3"
+        rows="5"
+        required
+    ></textarea>
+
+    <button class="btn btn-success">
+        Send Message
+    </button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+
+<h1>Projects</h1>
+
+<div class="row">
+
+{% for project in projects %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+
+            {% if project.image %}
+                <img src="{{ project.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+            {% endif %}
+
+            <div class="card-body">
+                <h5>{{ project.title }}</h5>
+                <p>{{ project.description }}</p>
+            </div>
+
+        </div>
+    </div>
+
+{% empty %}
+    <p>No projects found.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

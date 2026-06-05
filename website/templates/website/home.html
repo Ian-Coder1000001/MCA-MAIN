@@ -1,0 +1,31 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+
+<div class="text-center p-5 bg-light rounded mb-4">
+    <h1>Hon. Elphas Shilosio</h1>
+    <p>MCA Murhanda Ward</p>
+</div>
+
+<h3>Latest Projects</h3>
+
+<div class="row">
+
+{% for project in latest_projects %}
+<div class="col-md-4 mb-3">
+    <div class="card">
+        {% if project.image %}
+        <img src="{{ project.image.url }}" class="card-img-top" style="height:180px; object-fit:cover;">
+        {% endif %}
+        <div class="card-body">
+            <h5>{{ project.title }}</h5>
+        </div>
+    </div>
+</div>
+{% empty %}
+<p>No projects yet.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

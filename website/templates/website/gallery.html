@@ -1,0 +1,16 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+<h1>Gallery</h1>
+
+<div class="row">
+{% for photo in photos %}
+    <div class="col-md-4 mb-4">
+        <img src="{{ photo.image.url }}" class="img-fluid rounded shadow">
+        <p>{{ photo.title }}</p>
+    </div>
+{% empty %}
+    <p>No gallery images yet.</p>
+{% endfor %}
+</div>
+{% endblock %}
