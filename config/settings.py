@@ -1,13 +1,12 @@
 from pathlib import Path
-
 import dj_database_url
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-&bmie6uf!hta!0y&*ict%p-owj8glvwnkl$i*!dj4+pv-9(b5c'
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-&bmie6uf!hta!0y&*ict%p-owj8glvwnkl$i*!dj4+pv-9(b5c")
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -31,8 +30,9 @@ INSTALLED_APPS = [
 # MIDDLEWARE — CorsMiddleware MUST be first
 # ─────────────────────────────────────────────
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',          # <-- first, always
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ─────────────────────────────────────────────
-# DATABASE
+# DATABASE — switches to PostgreSQL on Render
 # ─────────────────────────────────────────────
 DATABASES = {
     'default': {
@@ -70,17 +70,18 @@ DATABASES = {
     }
 }
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+
 # ─────────────────────────────────────────────
-# CORS
+# CORS — no trailing slash on any origin
 # ─────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://elphas-shilosio.vercel.app/",
-
+    "https://elphas-shilosio.vercel.app",
 ]
-# Set to True only during local dev if you need all origins
-# CORS_ALLOW_ALL_ORIGINS = True
 
 # ─────────────────────────────────────────────
 # REST FRAMEWORK
@@ -112,30 +113,16 @@ USE_TZ        = True
 # ─────────────────────────────────────────────
 # STATIC & MEDIA FILES
 # ─────────────────────────────────────────────
-STATIC_URL      = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL  = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Only include STATICFILES_DIRS if the folder actually exists locally
+_static_dir = BASE_DIR / 'static'
+if _static_dir.exists():
+    STATICFILES_DIRS = [_static_dir]
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
-
-# Render sets this automatically
-ALLOWED_HOSTS = ["*"]
-
-# Whitenoise serves static files without a separate CDN
-MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Switch to Render's PostgreSQL when DATABASE_URL is set
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if DATABASE_URL:
-    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-
-# Pull secret key and debug flag from environment variables
-SECRET_KEY = os.environ.get("SECRET_KEY", SECRET_KEY)
-DEBUG = os.environ.get("DEBUG", "False") == "True"
