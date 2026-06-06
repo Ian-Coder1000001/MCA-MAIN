@@ -121,19 +121,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# Allow Railway's domain
+# Render sets this automatically
 ALLOWED_HOSTS = ["*"]
 
-# Whitenoise serves your static files
+# Whitenoise serves static files without a separate CDN
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Use Railway's database URL automatically
+# Switch to Render's PostgreSQL when DATABASE_URL is set
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
-    DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 
-# Production secret key from environment
+# Pull secret key and debug flag from environment variables
 SECRET_KEY = os.environ.get("SECRET_KEY", SECRET_KEY)
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False") == "True"
