@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import dj_database_url
+import os
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-&bmie6uf!hta!0y&*ict%p-owj8glvwnkl$i*!dj4+pv-9(b5c'
@@ -114,3 +117,23 @@ MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+# Allow Railway's domain
+ALLOWED_HOSTS = ["*"]
+
+# Whitenoise serves your static files
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Use Railway's database URL automatically
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
+
+# Production secret key from environment
+SECRET_KEY = os.environ.get("SECRET_KEY", SECRET_KEY)
+DEBUG = os.environ.get("DEBUG", "True") == "True"
