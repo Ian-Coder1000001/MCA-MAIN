@@ -8,8 +8,8 @@ A modern Django website project with:
 - Admin dashboard
 - SEO-friendly structure
 
----
 
+<<<<<<< HEAD
 # Project Structure
 
 ```bash
@@ -152,3 +152,5 @@ VPS servers
 
 
 
+=======
+>>>>>>> ab5292b8980e5103fc761efda2a99061cd26bbc1
