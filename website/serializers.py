@@ -7,14 +7,13 @@ from .models import (
 
 
 def null_if_empty(value):
-    """Return None instead of empty string for URL/image fields."""
     if not value or str(value).strip() == "":
         return None
     return value
 
 
 # ─────────────────────────────────────────────
-# SITE SETTINGS — Hero
+# HERO
 # ─────────────────────────────────────────────
 class HeroStatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,20 +28,17 @@ class HeroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = SiteSettings
-        fields = [
-            "candidate_name", "tagline", "bio_short",
-            "photo_url", "video_url", "video_title", "stats",
-        ]
+        fields = ["candidate_name", "tagline", "bio_short", "photo_url", "video_url", "video_title", "stats"]
 
     def get_photo_url(self, obj):
-        return null_if_empty(obj.photo_url)
+        return null_if_empty(obj.get_photo_url(self.context.get("request")))
 
     def get_video_url(self, obj):
         return null_if_empty(obj.video_url)
 
 
 # ─────────────────────────────────────────────
-# SITE SETTINGS — About
+# ABOUT
 # ─────────────────────────────────────────────
 class TimelineEntrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,7 +62,7 @@ class AboutSerializer(serializers.ModelSerializer):
         fields = ["bio", "vision", "commitment", "photo_url", "timeline", "values"]
 
     def get_photo_url(self, obj):
-        return null_if_empty(obj.about_photo_url)
+        return null_if_empty(obj.get_about_photo_url(self.context.get("request")))
 
 
 # ─────────────────────────────────────────────
@@ -103,18 +99,21 @@ class GallerySerializer(serializers.ModelSerializer):
         fields = ["id", "url", "caption", "type", "tag"]
 
     def get_url(self, obj):
-        request = self.context.get("request")
-        raw = obj.get_url(request)
-        return null_if_empty(raw)
+        return null_if_empty(obj.get_url(self.context.get("request")))
 
 
 # ─────────────────────────────────────────────
 # PROJECT IMAGE
 # ─────────────────────────────────────────────
 class ProjectImageSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model  = ProjectImage
         fields = ["url", "caption"]
+
+    def get_url(self, obj):
+        return null_if_empty(obj.get_url(self.context.get("request")))
 
 
 # ─────────────────────────────────────────────
@@ -127,21 +126,16 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Project
-        fields = [
-            "id", "title", "slug", "description",
-            "year", "cover_image", "images",
-            "category", "is_featured",
-        ]
+        fields = ["id", "title", "slug", "description", "year", "cover_image", "images", "category", "is_featured"]
 
     def get_cover_image(self, obj):
-        return null_if_empty(obj.cover_image)
+        return null_if_empty(obj.get_cover_url(self.context.get("request")))
 
 
 # ─────────────────────────────────────────────
 # NEWS
 # ─────────────────────────────────────────────
 class NewsListSerializer(serializers.ModelSerializer):
-    """Lighter serializer for list views — omits full content and gallery."""
     cover_image = serializers.SerializerMethodField()
 
     class Meta:
@@ -149,28 +143,24 @@ class NewsListSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "slug", "excerpt", "cover_image", "published_at", "author"]
 
     def get_cover_image(self, obj):
-        return null_if_empty(obj.cover_image)
+        return null_if_empty(obj.get_cover_url(self.context.get("request")))
 
 
 class NewsSerializer(serializers.ModelSerializer):
     gallery     = GallerySerializer(many=True, read_only=True)
     cover_image = serializers.SerializerMethodField()
-    # Expose content also as "body" so frontend can read either field
     body        = serializers.CharField(source="content", read_only=True)
 
     class Meta:
         model  = News
-        fields = [
-            "id", "title", "slug", "excerpt", "content", "body",
-            "cover_image", "published_at", "author", "gallery",
-        ]
+        fields = ["id", "title", "slug", "excerpt", "content", "body", "cover_image", "published_at", "author", "gallery"]
 
     def get_cover_image(self, obj):
-        return null_if_empty(obj.cover_image)
+        return null_if_empty(obj.get_cover_url(self.context.get("request")))
 
 
 # ─────────────────────────────────────────────
-# CONTACT MESSAGE
+# CONTACT
 # ─────────────────────────────────────────────
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:

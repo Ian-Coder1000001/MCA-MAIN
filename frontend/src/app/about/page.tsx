@@ -18,7 +18,7 @@ export default async function AboutPage() {
       {/* Page header */}
       <div className="page-header">
         <div className="container-site" style={{ position: "relative", zIndex: 1 }}>
-          <div className="divider" style={{ background: "var(--clay-400)" }} aria-hidden="true" />
+          <div className="divider" style={{ background: "#1d4ed8" }} aria-hidden="true" />
           <h1
             style={{
               fontFamily: "'Playfair Display', Georgia, serif",
@@ -139,7 +139,7 @@ export default async function AboutPage() {
                 style={{
                   borderRadius: "1rem",
                   overflow: "hidden",
-                  background: "var(--forest-50)",
+                  background: "#eff6ff",
                   border: "1.5px solid var(--stone-100)",
                   marginBottom: "1.5rem",
                   aspectRatio: "3/4",
@@ -188,7 +188,7 @@ export default async function AboutPage() {
               {/* Quick facts card */}
               <div
                 style={{
-                  background: "var(--forest-900)",
+                  background: "#0f172a",
                   borderRadius: "1rem",
                   padding: "1.5rem",
                 }}
@@ -314,7 +314,7 @@ export default async function AboutPage() {
                       style={{
                         fontFamily: "'Playfair Display', Georgia, serif",
                         fontWeight: 700,
-                        color: "var(--forest-600)",
+                        color: "#1d4ed8",
                         fontSize: "1.1rem",
                       }}
                     >
@@ -329,7 +329,7 @@ export default async function AboutPage() {
                         transform: "translateY(-50%)",
                         width: 10, height: 10,
                         borderRadius: "50%",
-                        background: "var(--clay-400)",
+                        background: "#1d4ed8",
                         border: "2px solid #fff",
                         boxShadow: "0 0 0 2px var(--clay-200)",
                       }}
@@ -396,7 +396,7 @@ export default async function AboutPage() {
                 style={{
                   background: "var(--stone-50)",
                   border: "1.5px solid var(--stone-100)",
-                  borderTop: "3px solid var(--forest-500)",
+                  borderTop: "3px solid #2563eb",
                   borderRadius: "0.875rem",
                   padding: "1.5rem",
                 }}
@@ -432,7 +432,7 @@ export default async function AboutPage() {
       <section
         aria-label="Call to action"
         style={{
-          background: "var(--forest-800)",
+          background: "#0f172a",
           paddingTop: "4rem", paddingBottom: "4rem",
           textAlign: "center",
         }}
@@ -463,7 +463,7 @@ export default async function AboutPage() {
             <Link
               href="/projects"
               style={{
-                background: "var(--clay-400)",
+                background: "#1d4ed8",
                 color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,

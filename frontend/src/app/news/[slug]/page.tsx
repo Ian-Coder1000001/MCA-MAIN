@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { api } from "@/lib/api";
 import { mockNews } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -53,7 +54,7 @@ export default async function NewsArticlePage({ params }: Props) {
       <div
         style={{
           background:
-            "linear-gradient(135deg, var(--forest-900) 0%, var(--forest-800) 60%, var(--forest-700) 100%)",
+            "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)",
           paddingTop: "3.5rem",
           paddingBottom: "3rem",
           position: "relative",
@@ -65,7 +66,7 @@ export default async function NewsArticlePage({ params }: Props) {
           style={{
             position: "absolute", inset: 0,
             backgroundImage:
-              "radial-gradient(circle at 80% 20%, rgba(224,127,58,0.07) 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 20%, rgba(37,99,235,0.07) 0%, transparent 50%)",
             pointerEvents: "none",
           }}
         />
@@ -147,9 +148,9 @@ export default async function NewsArticlePage({ params }: Props) {
           >
             <span
               style={{
-                background: "rgba(224,127,58,0.18)",
-                border: "1px solid rgba(224,127,58,0.32)",
-                color: "var(--clay-300)",
+                background: "rgba(37,99,235,0.18)",
+                border: "1px solid rgba(37,99,235,0.32)",
+                color: "#93c5fd",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: "0.7rem",
                 fontWeight: 600,
@@ -258,32 +259,39 @@ export default async function NewsArticlePage({ params }: Props) {
             </p>
           )}
 
-          {/* Back link */}
-          <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--stone-100)" }}>
+          {/* Back link + Share row */}
+          <div style={{
+            marginTop: "3rem",
+            paddingTop: "2rem",
+            borderTop: "1px solid #e4e4e7",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}>
             <Link
               href="/news"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.4rem",
-                color: "var(--forest-600)",
-                fontFamily: "'DM Sans', sans-serif",
+                color: "#1d4ed8",
+                fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
                 fontSize: "0.875rem",
                 textDecoration: "none",
               }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path
-                  d="M10 7H4M6.5 4L3 7l3.5 3"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M10 7H4M6.5 4L3 7l3.5 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Back to all news
             </Link>
+            <ShareButton
+              title={article.title}
+              description={article.excerpt}
+            />
           </div>
         </div>
       </article>
@@ -321,9 +329,9 @@ export default async function NewsArticlePage({ params }: Props) {
             >
               {related.map((a, i) => {
                 const gradients = [
-                  "linear-gradient(135deg, var(--forest-700), var(--forest-500))",
-                  "linear-gradient(135deg, var(--forest-800), var(--forest-600))",
-                  "linear-gradient(135deg, var(--forest-900), var(--forest-700))",
+                  "linear-gradient(135deg, #1e3a5f, #2563eb)",
+                  "linear-gradient(135deg, #1e293b, #1d4ed8)",
+                  "linear-gradient(135deg, #0f172a, #1e3a5f)",
                 ];
                 return (
                   <Link
@@ -385,7 +393,7 @@ export default async function NewsArticlePage({ params }: Props) {
                       </h3>
                       <p
                         style={{
-                          color: "var(--clay-400)",
+                          color: "#1d4ed8",
                           fontFamily: "'DM Sans', sans-serif",
                           fontWeight: 600,
                           fontSize: "0.75rem",

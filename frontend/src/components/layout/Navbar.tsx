@@ -14,12 +14,12 @@ const links = [
 ];
 
 export function Navbar() {
-  const pathname                  = usePathname();
-  const [open, setOpen]           = useState(false);
-  const [scrolled, setScrolled]   = useState(false);
+  const pathname                = usePathname();
+  const [open, setOpen]         = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -30,8 +30,8 @@ export function Navbar() {
     <header
       role="banner"
       style={{
-        background: "var(--forest-800)",
-        boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.35)" : "none",
+        background: "#16a34a",
+        boxShadow: scrolled ? "0 2px 16px rgba(0,0,0,0.18)" : "0 1px 0 rgba(255,255,255,0.1)",
         transition: "box-shadow 0.3s ease",
       }}
       className="sticky top-0 z-50 w-full"
@@ -42,35 +42,31 @@ export function Navbar() {
         <Link
           href="/"
           aria-label="Elphas Shilosio — Home"
-          className="flex flex-col leading-tight shrink-0"
-          style={{ textDecoration: "none" }}
+          style={{ textDecoration: "none", display: "flex", flexDirection: "column", lineHeight: 1.2 }}
         >
-          <span
-            style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              color: "#ffffff",
-              fontSize: "1.1rem",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-            }}
-          >
+          <span style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            color: "#ffffff",
+            fontSize: "1.15rem",
+            fontWeight: 700,
+            letterSpacing: "-0.01em",
+          }}>
             Elphas Shilosio
           </span>
-          <span
-            style={{
-              color: "rgba(255,255,255,0.5)",
-              fontSize: "0.65rem",
-              letterSpacing: "0.1em",
-              fontFamily: "'DM Sans', sans-serif",
-              textTransform: "uppercase",
-            }}
-          >
+          <span style={{
+            color: "rgba(255,255,255,0.75)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.1em",
+            fontFamily: "'Inter', sans-serif",
+            textTransform: "uppercase",
+            fontWeight: 500,
+          }}>
             MCA Candidate · Murhanda Ward
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-0.5">
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-1">
           {links.map(({ href, label }) => {
             const active = pathname === href;
             return (
@@ -79,23 +75,29 @@ export function Navbar() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 style={{
-                  color: active ? "#ffffff" : "rgba(255,255,255,0.65)",
-                  background: active ? "rgba(255,255,255,0.1)" : "transparent",
-                  borderBottom: active ? "2px solid var(--clay-400)" : "2px solid transparent",
-                  fontFamily: "'DM Sans', sans-serif",
+                  color: active ? "#ffffff" : "rgba(255,255,255,0.82)",
+                  background: active ? "rgba(255,255,255,0.15)" : "transparent",
+                  borderBottom: active ? "2px solid rgba(255,255,255,0.9)" : "2px solid transparent",
+                  fontFamily: "'Inter', sans-serif",
                   fontSize: "0.875rem",
-                  fontWeight: active ? 500 : 400,
-                  padding: "0.5rem 0.875rem",
+                  fontWeight: active ? 600 : 400,
+                  padding: "0.5rem 0.9rem",
                   borderRadius: "0.375rem 0.375rem 0 0",
                   transition: "all 0.18s ease",
                   textDecoration: "none",
                   whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "#ffffff";
+                  if (!active) {
+                    (e.currentTarget as HTMLElement).style.color = "#ffffff";
+                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)";
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.65)";
+                  if (!active) {
+                    (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.82)";
+                    (e.currentTarget as HTMLElement).style.background = "transparent";
+                  }
                 }}
               >
                 {label}
@@ -105,20 +107,24 @@ export function Navbar() {
           <Link
             href="/contact"
             style={{
-              background: "var(--clay-400)",
-              color: "#ffffff",
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              padding: "0.45rem 1.1rem",
+              background: "#ffffff",
+              color: "#15803d",
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "0.82rem",
+              fontWeight: 700,
+              padding: "0.45rem 1.2rem",
               borderRadius: "0.5rem",
-              marginLeft: "0.75rem",
+              marginLeft: "0.5rem",
               textDecoration: "none",
               letterSpacing: "0.01em",
-              transition: "opacity 0.18s",
+              transition: "all 0.18s",
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "#f0fdf4";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "#ffffff";
+            }}
           >
             Get in touch
           </Link>
@@ -130,26 +136,23 @@ export function Navbar() {
           aria-expanded={open}
           aria-controls="mobile-menu"
           className="md:hidden flex flex-col justify-center gap-1.5 w-10 h-10 items-center rounded-lg"
-          style={{ background: "rgba(255,255,255,0.08)", border: "none", cursor: "pointer" }}
+          style={{ background: "rgba(255,255,255,0.15)", border: "none", cursor: "pointer" }}
           onClick={() => setOpen(!open)}
         >
-          <span style={{
-            display: "block", width: 20, height: 2, background: "#fff",
-            borderRadius: 2,
-            transform: open ? "rotate(45deg) translateY(6px)" : "none",
-            transition: "transform 0.22s ease",
-          }} />
-          <span style={{
-            display: "block", width: 20, height: 2, background: "#fff",
-            borderRadius: 2, opacity: open ? 0 : 1,
-            transition: "opacity 0.15s ease",
-          }} />
-          <span style={{
-            display: "block", width: 20, height: 2, background: "#fff",
-            borderRadius: 2,
-            transform: open ? "rotate(-45deg) translateY(-6px)" : "none",
-            transition: "transform 0.22s ease",
-          }} />
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              style={{
+                display: "block", width: 20, height: 2,
+                background: "#fff", borderRadius: 2,
+                transition: "all 0.22s ease",
+                transform:
+                  i === 0 && open ? "rotate(45deg) translateY(6px)" :
+                  i === 2 && open ? "rotate(-45deg) translateY(-6px)" : "none",
+                opacity: i === 1 && open ? 0 : 1,
+              }}
+            />
+          ))}
         </button>
       </div>
 
@@ -159,13 +162,13 @@ export function Navbar() {
         role="navigation"
         aria-label="Mobile navigation"
         style={{
-          background: "var(--forest-900)",
-          maxHeight: open ? "420px" : "0",
+          background: "#14532d",
+          maxHeight: open ? "480px" : "0",
           overflow: "hidden",
           transition: "max-height 0.3s cubic-bezier(.4,0,.2,1)",
         }}
       >
-        <div className="container-site py-3 flex flex-col gap-0.5 pb-5">
+        <div className="container-site py-3 flex flex-col gap-1 pb-5">
           {links.map(({ href, label }) => {
             const active = pathname === href;
             return (
@@ -173,15 +176,15 @@ export function Navbar() {
                 key={href}
                 href={href}
                 style={{
-                  color: active ? "#ffffff" : "rgba(255,255,255,0.65)",
-                  background: active ? "rgba(255,255,255,0.08)" : "transparent",
-                  borderLeft: active ? "3px solid var(--clay-400)" : "3px solid transparent",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "0.95rem",
-                  padding: "0.65rem 1rem",
+                  color: active ? "#ffffff" : "rgba(255,255,255,0.75)",
+                  background: active ? "rgba(255,255,255,0.1)" : "transparent",
+                  borderLeft: active ? "3px solid rgba(255,255,255,0.8)" : "3px solid transparent",
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "1rem",
+                  padding: "0.7rem 1rem",
                   borderRadius: "0 0.375rem 0.375rem 0",
                   textDecoration: "none",
-                  fontWeight: active ? 500 : 400,
+                  fontWeight: active ? 600 : 400,
                 }}
               >
                 {label}
@@ -191,14 +194,14 @@ export function Navbar() {
           <Link
             href="/contact"
             style={{
-              background: "var(--clay-400)",
-              color: "#fff",
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              padding: "0.75rem 1.25rem",
+              background: "#ffffff",
+              color: "#15803d",
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              padding: "0.8rem 1.25rem",
               borderRadius: "0.5rem",
-              marginTop: "0.75rem",
+              marginTop: "0.5rem",
               textAlign: "center",
               textDecoration: "none",
               display: "block",

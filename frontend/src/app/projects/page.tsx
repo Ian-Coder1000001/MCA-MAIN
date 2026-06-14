@@ -1,512 +1,385 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { mockProjects, mockCategories } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
+import { ShareButton } from "@/components/ui/ShareButton";
 import type { Project, Category } from "@/types";
 
-// Category accent colors — no emojis, clean visual identity
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
-  health:      { bg: "#e8f5e9", text: "#2e7d32", border: "#a5d6a7" },
-  education:   { bg: "#e3f2fd", text: "#1565c0", border: "#90caf9" },
-  transport:   { bg: "#fff8e1", text: "#f57f17", border: "#ffe082" },
-  water:       { bg: "#e0f7fa", text: "#00695c", border: "#80deea" },
-  agriculture: { bg: "#f1f8e9", text: "#33691e", border: "#aed581" },
-  security:    { bg: "#fffde7", text: "#f9a825", border: "#fff176" },
-  youth:       { bg: "#fce4ec", text: "#ad1457", border: "#f48fb1" },
-  women:       { bg: "#f3e5f5", text: "#6a1b9a", border: "#ce93d8" },
-  environment: { bg: "#e8f5e9", text: "#1b5e20", border: "#a5d6a7" },
-  bursary:     { bg: "#e8eaf6", text: "#283593", border: "#9fa8da" },
-  social:      { bg: "#fbe9e7", text: "#bf360c", border: "#ffab91" },
-  trade:       { bg: "#fff3e0", text: "#e65100", border: "#ffcc80" },
-  ict:         { bg: "#e1f5fe", text: "#01579b", border: "#81d4fa" },
+  health:      { bg: "#dbeafe", text: "#1d4ed8", border: "#93c5fd" },
+  education:   { bg: "#dbeafe", text: "#1d4ed8", border: "#93c5fd" },
+  transport:   { bg: "#fef9c3", text: "#a16207", border: "#fde047" },
+  water:       { bg: "#cffafe", text: "#0e7490", border: "#67e8f9" },
+  agriculture: { bg: "#dbeafe", text: "#1e3a5f", border: "#93c5fd" },
+  security:    { bg: "#fefce8", text: "#854d0e", border: "#fef08a" },
+  youth:       { bg: "#fce7f3", text: "#9d174d", border: "#f9a8d4" },
+  women:       { bg: "#f3e8ff", text: "#6b21a8", border: "#d8b4fe" },
+  environment: { bg: "#dbeafe", text: "#0f172a", border: "#93c5fd" },
+  bursary:     { bg: "#e0e7ff", text: "#3730a3", border: "#a5b4fc" },
+  social:      { bg: "#fff1f2", text: "#9f1239", border: "#fda4af" },
+  trade:       { bg: "#fff7ed", text: "#9a3412", border: "#fdba74" },
+  ict:         { bg: "#e0f2fe", text: "#0369a1", border: "#7dd3fc" },
 };
+const DEFAULT_COLOR = { bg: "#f4f4f5", text: "#52525b", border: "#d4d4d8" };
+function getCatColors(s: string) { return categoryColors[s] || DEFAULT_COLOR; }
 
-const DEFAULT_COLOR = { bg: "#f5f5f5", text: "#555", border: "#ddd" };
-
-function getCatColors(slug: string) {
-  return categoryColors[slug] || DEFAULT_COLOR;
-}
-
-/**
- * Safely resolve category slug and name from a project.
- * Handles: full category object, null category, or bare string (legacy mock).
- */
-function resolveCat(
-  project: Project,
-  categories: Category[]
-): { slug: string; name: string } {
-  const cat = project.category;
-  // Full object from backend
-  if (cat && typeof cat === "object" && "slug" in cat) {
-    return { slug: cat.slug ?? "", name: cat.name ?? "" };
-  }
-  // Bare slug string (mock data fallback)
-  if (typeof cat === "string") {
-    const found = categories.find((c) => c.slug === cat);
-    return { slug: cat, name: found?.name ?? cat };
-  }
-  // null / undefined — uncategorised
+function resolveCat(p: Project, cats: Category[]) {
+  const c = p.category;
+  if (c && typeof c === "object" && "slug" in c) return { slug: c.slug ?? "", name: c.name ?? "" };
+  if (typeof c === "string") { const f = cats.find((x) => x.slug === c); return { slug: c, name: f?.name ?? c }; }
   return { slug: "", name: "Uncategorised" };
 }
 
-function ProjectModal({
-  project,
-  categories,
-  onClose,
-}: {
-  project: Project;
-  categories: Category[];
-  onClose: () => void;
-}) {
+function ProjectModal({ project, categories, onClose }: { project: Project; categories: Category[]; onClose: () => void }) {
   const { slug: catSlug, name: catName } = resolveCat(project, categories);
   const colors = getCatColors(catSlug);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape
+  // Lock body scroll, handle Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", h);
+    return () => { document.body.style.overflow = ""; document.removeEventListener("keydown", h); };
   }, [onClose]);
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={project.title}
-      style={{
-        position: "fixed", inset: 0, zIndex: 100,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "1rem",
-        background: "rgba(7,31,16,0.75)",
-        backdropFilter: "blur(4px)",
-      }}
+      role="dialog" aria-modal="true" aria-label={project.title}
       onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
+        background: "rgba(0,0,0,0.65)",
+        backdropFilter: "blur(6px)",
+        // On desktop centre it; on mobile slide up from bottom
+        padding: 0,
+      }}
     >
       <div
+        ref={scrollRef}
+        onClick={(e) => e.stopPropagation()}
         style={{
           background: "#fff",
-          borderRadius: "1.25rem",
-          overflow: "hidden",
+          // Mobile: full width, slides up from bottom, max 95vh
+          // Desktop: centred card, max 680px wide, max 90vh
           width: "100%",
-          maxWidth: 500,
-          boxShadow: "0 32px 80px rgba(0,0,0,0.35)",
-          animation: "fadeUp 0.25s cubic-bezier(.22,1,.36,1)",
+          maxWidth: 680,
+          maxHeight: "95dvh",
+          overflowY: "auto",
+          overscrollBehavior: "contain",
+          borderRadius: "1.25rem 1.25rem 0 0",
+          boxShadow: "0 -8px 48px rgba(0,0,0,0.25)",
+          animation: "slideUp 0.28s cubic-bezier(.22,1,.36,1)",
+          // On larger screens, round all corners and add margin
+          marginBottom: 0,
         }}
-        onClick={(e) => e.stopPropagation()}
+        // Give desktop styling via inline override at ≥640px handled by CSS below
+        className="project-modal-inner"
       >
-        {/* Cover image or colored header */}
-        <div
-          style={{
-            height: 160,
-            background: project.cover_image ? "var(--stone-100)" : colors.bg,
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
+        {/* Drag handle (mobile visual cue) */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "0.75rem 0 0" }}>
+          <div style={{ width: 40, height: 4, borderRadius: 9999, background: "#e4e4e7" }} aria-hidden="true" />
+        </div>
+
+        {/* Cover image */}
+        <div style={{
+          // Responsive height: shorter on phones, taller on tablets+
+          height: "clamp(200px, 40vw, 320px)",
+          position: "relative", overflow: "hidden",
+          background: colors.bg,
+          margin: "0.75rem 1rem 0",
+          borderRadius: "0.875rem",
+        }}>
           {project.cover_image ? (
-            <LazyImage
-              src={project.cover_image}
-              alt={project.title}
-              fill
-              objectFit="cover"
-              priority
-            />
+            <LazyImage src={project.cover_image} alt={project.title} fill objectFit="cover" priority />
           ) : (
-            <div
-              style={{
-                width: "100%", height: "100%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: "2.5rem",
-                  fontWeight: 700,
-                  color: colors.border,
-                  letterSpacing: "-0.02em",
-                  userSelect: "none",
-                }}
-                aria-hidden="true"
-              >
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(3rem,8vw,5rem)", fontWeight: 700, color: colors.border }} aria-hidden="true">
                 {project.title.charAt(0)}
               </span>
             </div>
           )}
-          {/* Close button */}
+          {/* Close button — always visible */}
           <button
             aria-label="Close"
             onClick={onClose}
             style={{
-              position: "absolute", top: 12, right: 12,
-              width: 32, height: 32, borderRadius: "50%",
-              background: "rgba(0,0,0,0.3)",
-              color: "#fff", border: "none", cursor: "pointer",
+              position: "absolute", top: 10, right: 10,
+              width: 36, height: 36, borderRadius: "50%",
+              background: "rgba(0,0,0,0.5)", color: "#fff",
+              border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
+              // Minimum 44px touch target via padding trick
+              padding: 0, minWidth: 44, minHeight: 44,
+              margin: "-4px",
             }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M1 1l12 12M13 1L1 13" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+              <path d="M1 1l12 12M13 1L1 13" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
           </button>
+          {/* Category badge */}
+          <div style={{ position: "absolute", bottom: "0.75rem", left: "0.75rem" }}>
+            <span style={{
+              background: colors.bg, color: colors.text,
+              border: `1px solid ${colors.border}`,
+              fontFamily: "'Inter',sans-serif", fontWeight: 600,
+              fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase",
+              padding: "0.25rem 0.75rem", borderRadius: "9999px",
+            }}>
+              {catName}
+            </span>
+          </div>
         </div>
 
-        <div style={{ padding: "1.5rem 1.75rem 2rem" }}>
-          {/* Category chip */}
-          <span
-            style={{
-              display: "inline-block",
-              background: colors.bg,
-              color: colors.text,
-              border: `1px solid ${colors.border}`,
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: "0.7rem",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              padding: "0.3rem 0.75rem",
-              borderRadius: "9999px",
-              marginBottom: "0.875rem",
-            }}
-          >
-            {catName}
-          </span>
+        {/* Body */}
+        <div style={{ padding: "clamp(1rem,4vw,1.75rem) clamp(1rem,4vw,2rem) 2rem" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem", marginBottom: "0.875rem" }}>
+            <h2 style={{
+              fontFamily: "'Playfair Display',serif",
+              color: "#18181b",
+              fontSize: "clamp(1.25rem,4vw,1.6rem)",
+              fontWeight: 700, lineHeight: 1.2, flex: 1,
+            }}>
+              {project.title}
+            </h2>
+            <span style={{
+              background: "#f4f4f5", color: "#52525b",
+              fontFamily: "'Inter',sans-serif",
+              fontSize: "0.82rem", fontWeight: 600,
+              padding: "0.3rem 0.75rem", borderRadius: "0.5rem",
+              flexShrink: 0, whiteSpace: "nowrap",
+            }}>
+              {project.year}
+            </span>
+          </div>
 
-          <h2
-            style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              color: "var(--stone-800)",
-              fontSize: "1.4rem",
-              fontWeight: 600,
-              marginBottom: "0.875rem",
-              lineHeight: 1.25,
-            }}
-          >
-            {project.title}
-          </h2>
-
-          <p
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              color: "var(--stone-600)",
-              fontSize: "0.9rem",
-              lineHeight: 1.7,
-            }}
-          >
+          <p style={{
+            fontFamily: "'Inter',sans-serif",
+            color: "#52525b",
+            fontSize: "clamp(0.925rem,2.5vw,1rem)",
+            lineHeight: 1.75,
+          }}>
             {project.description}
           </p>
 
-          <p
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              color: "var(--stone-400)",
-              fontSize: "0.8rem",
-              marginTop: "1.25rem",
-            }}
-          >
-            Completed:{" "}
-            <strong style={{ color: "var(--stone-600)" }}>{project.year}</strong>
-          </p>
-
-          {/* Project images if any */}
+          {/* Additional images — tap any to see full screen in lightbox handled by parent */}
           {project.images && project.images.length > 0 && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
-                gap: "0.5rem",
-                marginTop: "1.25rem",
-              }}
-            >
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+              gap: "0.625rem",
+              marginTop: "1.25rem",
+            }}>
               {project.images.map((img, idx) => (
-                <div
-                  key={idx}
-                  style={{ borderRadius: "0.5rem", overflow: "hidden", aspectRatio: "1", position: "relative" }}
-                >
-                  <LazyImage
-                    src={img.url}
-                    alt={img.caption || `Image ${idx + 1}`}
-                    fill
-                    objectFit="cover"
-                  />
+                <div key={idx} style={{ borderRadius: "0.625rem", overflow: "hidden", aspectRatio: "4/3", position: "relative" }}>
+                  <LazyImage src={img.url} alt={img.caption || `Image ${idx + 1}`} fill objectFit="cover" />
                 </div>
               ))}
             </div>
           )}
+
+          {/* Share */}
+          <div style={{
+            marginTop: "1.5rem", paddingTop: "1.25rem",
+            borderTop: "1px solid #f4f4f5",
+            display: "flex", alignItems: "center",
+            justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem",
+          }}>
+            <p style={{ fontFamily: "'Inter',sans-serif", color: "#a1a1aa", fontSize: "0.82rem" }}>
+              Share this project
+            </p>
+            <ShareButton title={project.title} description={project.description} />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function ProjectsContent() {
-  const searchParams              = useSearchParams();
-  const [active, setActive]       = useState("all");
-  const [selected, setSelected]   = useState<Project | null>(null);
-  const [projects, setProjects]   = useState<Project[]>(mockProjects);
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
-  const [loading, setLoading]     = useState(false);
+function SkeletonCard() {
+  return (
+    <div style={{ background: "#fff", borderRadius: "1rem", overflow: "hidden", border: "1.5px solid #e4e4e7" }}>
+      <div className="skeleton" style={{ height: "clamp(180px,30vw,240px)", width: "100%" }} />
+      <div style={{ padding: "1.25rem" }}>
+        <div className="skeleton" style={{ height: 20, width: "75%", marginBottom: "0.75rem" }} />
+        <div className="skeleton" style={{ height: 14, width: "40%", marginBottom: "1rem" }} />
+        <div className="skeleton" style={{ height: 14, width: "100%", marginBottom: "0.5rem" }} />
+        <div className="skeleton" style={{ height: 14, width: "85%" }} />
+      </div>
+    </div>
+  );
+}
 
-  // Load categories once
+function ProjectsContent() {
+  const searchParams                = useSearchParams();
+  const [active, setActive]         = useState("all");
+  const [selected, setSelected]     = useState<Project | null>(null);
+  const [projects, setProjects]     = useState<Project[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading]       = useState(true);
+
   useEffect(() => {
-    api.categories()
-      .then(setCategories)
-      .catch(() => setCategories(mockCategories));
+    api.categories().then(setCategories).catch(() => setCategories(mockCategories));
   }, []);
 
-  // Load projects when filter changes
   useEffect(() => {
     setLoading(true);
-    api
-      .projects(active === "all" ? undefined : active)
-      .then((data) => { setProjects(data); setLoading(false); })
+    api.projects(active === "all" ? undefined : active)
+      .then((d) => { setProjects(d); setLoading(false); })
       .catch(() => {
-        setProjects(
-          active === "all"
-            ? mockProjects
-            : mockProjects.filter((p) => p.category.slug === active)
-        );
+        setProjects(active === "all" ? mockProjects : mockProjects.filter((p) => p.category?.slug === active));
         setLoading(false);
       });
   }, [active]);
 
-  // Sync URL param → filter
   useEffect(() => {
     const cat = searchParams.get("category");
     if (cat) setActive(cat);
   }, [searchParams]);
 
   return (
-    <div>
+    <div style={{ background: "#fff", minHeight: "100vh" }}>
       {/* Page header */}
       <div className="page-header">
         <div className="container-site" style={{ position: "relative", zIndex: 1 }}>
-          <div className="divider" style={{ background: "var(--clay-400)" }} aria-hidden="true" />
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              color: "#fff",
-              fontSize: "clamp(2rem, 5vw, 3rem)",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Projects
-          </h1>
-          <p
-            style={{
-              color: "rgba(255,255,255,0.55)",
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.9rem",
-            }}
-          >
-            Every project delivered for Murhanda Ward residents — filter by sector below
+          <div className="divider" aria-hidden="true" />
+          <h1 style={{
+            fontFamily: "'Playfair Display',Georgia,serif",
+            color: "#fff",
+            fontSize: "clamp(1.75rem,5vw,3rem)",
+            marginBottom: "0.4rem",
+          }}>Projects</h1>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontFamily: "'Inter',sans-serif", fontSize: "clamp(0.875rem,2.5vw,1rem)" }}>
+            Every project delivered for Murhanda Ward residents
           </p>
         </div>
       </div>
 
-      {/* Filter strip — sticky */}
-      <div
-        style={{
-          background: "#fff",
-          borderBottom: "1.5px solid var(--stone-100)",
-          position: "sticky",
-          top: 64, zIndex: 30,
-        }}
-      >
-        <div
-          className="container-site"
-          style={{
-            overflowX: "auto",
-            display: "flex",
-            gap: "0.375rem",
-            padding: "0.75rem 0",
-            scrollbarWidth: "none",
-          }}
-        >
-          <button
-            onClick={() => setActive("all")}
-            aria-pressed={active === "all"}
-            className={`filter-pill ${active === "all" ? "active" : ""}`}
-          >
-            All{" "}
-            <span style={{ opacity: 0.6, fontSize: "0.72rem" }}>{projects.length}</span>
+      {/* Filter strip — horizontally scrollable, no scrollbar visible */}
+      <div style={{
+        background: "#fff", borderBottom: "1.5px solid #e4e4e7",
+        position: "sticky", top: 64, zIndex: 30,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+      }}>
+        <div className="container-site" style={{
+          overflowX: "auto", display: "flex",
+          gap: "0.5rem", padding: "0.75rem 0",
+          scrollbarWidth: "none", WebkitOverflowScrolling: "touch",
+        } as React.CSSProperties}>
+          <button onClick={() => setActive("all")} aria-pressed={active === "all"}
+            className={`filter-pill ${active === "all" ? "active" : ""}`}>
+            All <span style={{ opacity: 0.6, fontSize: "0.75rem", marginLeft: "0.2rem" }}>{projects.length}</span>
           </button>
-
-          {categories.map((cat) => {
-            const on = active === cat.slug;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActive(cat.slug)}
-                aria-pressed={on}
-                className={`filter-pill ${on ? "active" : ""}`}
-              >
-                {cat.name}
-                <span style={{ opacity: 0.55, fontSize: "0.72rem", marginLeft: "0.25rem" }}>
-                  {cat.project_count}
-                </span>
-              </button>
-            );
-          })}
+          {categories.map((cat) => (
+            <button key={cat.id} onClick={() => setActive(cat.slug)} aria-pressed={active === cat.slug}
+              className={`filter-pill ${active === cat.slug ? "active" : ""}`}>
+              {cat.name}
+              <span style={{ opacity: 0.55, fontSize: "0.75rem", marginLeft: "0.3rem" }}>{cat.project_count}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Project grid */}
-      <div
-        className="container-site"
-        style={{ paddingTop: "2.5rem", paddingBottom: "4rem" }}
-      >
-        {loading && (
-          <p
-            style={{
-              color: "var(--stone-400)",
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.82rem",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Loading...
+      {/* Grid */}
+      <div className="container-site" style={{ paddingTop: "2rem", paddingBottom: "5rem" }}>
+        {!loading && projects.length > 0 && (
+          <p style={{ color: "#71717a", fontFamily: "'Inter',sans-serif", fontSize: "0.875rem", marginBottom: "1.5rem" }}>
+            Showing {projects.length} project{projects.length !== 1 ? "s" : ""}
+            {active !== "all" && <span> in <strong style={{ color: "#27272a" }}>{categories.find((c) => c.slug === active)?.name}</strong></span>}
           </p>
         )}
 
-        <p
-          style={{
-            color: "var(--stone-400)",
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "0.82rem",
-            marginBottom: "1.5rem",
-          }}
-        >
-          Showing {projects.length} project{projects.length !== 1 ? "s" : ""}
-          {active !== "all" && (
-            <span>
-              {" "}in{" "}
-              <strong style={{ color: "var(--stone-600)" }}>
-                {categories.find((c) => c.slug === active)?.name}
-              </strong>
-            </span>
-          )}
-        </p>
-
-        {projects.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "5rem 0",
-              color: "var(--stone-400)",
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
+        {loading ? (
+          <div className="project-grid">{Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}</div>
+        ) : projects.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "5rem 0", color: "#a1a1aa", fontFamily: "'Inter',sans-serif" }}>
             No projects in this category yet. Check back soon.
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: "1.125rem",
-            }}
-            role="list"
-          >
+          <div className="project-grid" role="list">
             {projects.map((project) => {
               const { slug: catSlug, name: catName } = resolveCat(project, categories);
               const colors = getCatColors(catSlug);
-
               return (
                 <button
-                  key={project.id}
-                  role="listitem"
+                  key={project.id} role="listitem"
                   onClick={() => setSelected(project)}
                   className="card-lift"
-                  aria-label={`View details: ${project.title}`}
+                  aria-label={`View: ${project.title}`}
                   style={{
-                    textAlign: "left",
-                    background: "#fff",
-                    border: "1.5px solid var(--stone-100)",
-                    borderRadius: "1rem",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "border-color 0.18s",
+                    textAlign: "left", background: "#fff",
+                    border: "1.5px solid #e4e4e7", borderRadius: "1rem",
+                    overflow: "hidden", cursor: "pointer", padding: 0,
+                    transition: "border-color 0.18s, transform 0.22s, box-shadow 0.22s",
+                    // Minimum touch target height naturally met by card content
                   }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = colors.border;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--stone-100)";
-                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = colors.border; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#e4e4e7"; }}
                 >
-                  {/* Thumbnail */}
-                  <div
-                    style={{
-                      height: 90,
-                      background: project.cover_image ? "var(--stone-100)" : colors.bg,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  >
+                  {/* Image */}
+                  <div style={{
+                    height: "clamp(180px,30vw,240px)",
+                    background: project.cover_image ? "#f4f4f5" : colors.bg,
+                    position: "relative", overflow: "hidden",
+                  }}>
                     {project.cover_image ? (
-                      <LazyImage
-                        src={project.cover_image}
-                        alt={project.title}
-                        fill
-                        objectFit="cover"
-                      />
+                      <LazyImage src={project.cover_image} alt={project.title} fill objectFit="cover" />
                     ) : (
-                      <span
-                        style={{
-                          fontFamily: "'Playfair Display', Georgia, serif",
-                          fontSize: "2rem",
-                          fontWeight: 700,
-                          color: colors.border,
-                          userSelect: "none",
-                        }}
-                        aria-hidden="true"
-                      >
-                        {project.title.charAt(0)}
-                      </span>
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(2.5rem,6vw,4rem)", fontWeight: 700, color: colors.border }} aria-hidden="true">
+                          {project.title.charAt(0)}
+                        </span>
+                      </div>
                     )}
-                    {/* Year chip */}
-                    <span
-                      style={{
-                        position: "absolute", top: 8, right: 8,
-                        background: "rgba(0,0,0,0.35)",
-                        color: "#fff",
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontSize: "0.68rem",
-                        padding: "0.15rem 0.45rem",
-                        borderRadius: "0.375rem",
-                      }}
-                    >
-                      {project.year}
-                    </span>
+                    <div style={{
+                      position: "absolute", bottom: 0, left: 0, right: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%)",
+                      padding: "1.5rem 1rem 0.875rem",
+                      display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+                    }}>
+                      <span style={{
+                        background: colors.bg, color: colors.text,
+                        fontFamily: "'Inter',sans-serif", fontWeight: 600,
+                        fontSize: "0.68rem", letterSpacing: "0.07em", textTransform: "uppercase",
+                        padding: "0.2rem 0.6rem", borderRadius: "9999px",
+                      }}>{catName}</span>
+                      <span style={{
+                        background: "rgba(0,0,0,0.4)", color: "rgba(255,255,255,0.9)",
+                        fontFamily: "'Inter',sans-serif", fontSize: "0.75rem", fontWeight: 600,
+                        padding: "0.2rem 0.55rem", borderRadius: "0.375rem",
+                      }}>{project.year}</span>
+                    </div>
                   </div>
 
-                  <div style={{ padding: "0.875rem 1rem 1rem" }}>
-                    <p
-                      style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontWeight: 600,
-                        color: "var(--stone-800)",
-                        fontSize: "0.875rem",
-                        lineHeight: 1.35,
-                        marginBottom: "0.3rem",
-                      }}
-                    >
-                      {project.title}
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        color: "var(--stone-400)",
-                        fontSize: "0.75rem",
-                      }}
-                    >
-                      {catName}
+                  {/* Card body */}
+                  <div style={{ padding: "1.125rem 1.25rem 1.375rem" }}>
+                    <h3 style={{
+                      fontFamily: "'Playfair Display',serif", color: "#18181b",
+                      fontSize: "clamp(1rem,3vw,1.15rem)", fontWeight: 600,
+                      lineHeight: 1.3, marginBottom: "0.5rem",
+                    }}>{project.title}</h3>
+                    <p style={{
+                      fontFamily: "'Inter',sans-serif", color: "#71717a",
+                      fontSize: "clamp(0.85rem,2.5vw,0.9rem)",
+                      lineHeight: 1.65,
+                      display: "-webkit-box", WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical", overflow: "hidden",
+                      marginBottom: "0.875rem",
+                    }}>{project.description}</p>
+                    <p style={{
+                      fontFamily: "'Inter',sans-serif", color: "#1d4ed8",
+                      fontSize: "0.82rem", fontWeight: 600,
+                      display: "flex", alignItems: "center", gap: "0.3rem",
+                    }}>
+                      View details
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                        <path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </p>
                   </div>
                 </button>
@@ -516,34 +389,29 @@ function ProjectsContent() {
         )}
       </div>
 
-      {/* Detail modal */}
-      {selected && (
-        <ProjectModal
-          project={selected}
-          categories={categories}
-          onClose={() => setSelected(null)}
-        />
-      )}
+      {selected && <ProjectModal project={selected} categories={categories} onClose={() => setSelected(null)} />}
     </div>
   );
 }
 
 export default function ProjectsPage() {
   return (
-    <Suspense
-      fallback={
-        <div
-          style={{
-            padding: "4rem",
-            textAlign: "center",
-            fontFamily: "'DM Sans', sans-serif",
-            color: "var(--stone-400)",
-          }}
-        >
-          Loading projects...
+    <Suspense fallback={
+      <div className="container-site" style={{ paddingTop: "3rem" }}>
+        <div className="project-grid">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} style={{ background: "#fff", borderRadius: "1rem", overflow: "hidden", border: "1.5px solid #e4e4e7" }}>
+              <div className="skeleton" style={{ height: "clamp(180px,30vw,240px)" }} />
+              <div style={{ padding: "1.25rem" }}>
+                <div className="skeleton" style={{ height: 20, width: "70%", marginBottom: "0.75rem" }} />
+                <div className="skeleton" style={{ height: 14, width: "100%", marginBottom: "0.5rem" }} />
+                <div className="skeleton" style={{ height: 14, width: "80%" }} />
+              </div>
+            </div>
+          ))}
         </div>
-      }
-    >
+      </div>
+    }>
       <ProjectsContent />
     </Suspense>
   );

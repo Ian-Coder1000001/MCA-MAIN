@@ -28,7 +28,7 @@ export default async function HomePage() {
         aria-label="Hero"
         style={{
           background:
-            "linear-gradient(135deg, var(--forest-900) 0%, var(--forest-800) 40%, var(--forest-700) 70%, var(--forest-600) 100%)",
+            "linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1e3a5f 70%, #1d4ed8 100%)",
           minHeight: "clamp(520px, 85vh, 780px)",
           position: "relative",
           overflow: "hidden",
@@ -40,7 +40,7 @@ export default async function HomePage() {
           style={{
             position: "absolute", inset: 0,
             backgroundImage:
-              "radial-gradient(circle at 20% 50%, rgba(224,127,58,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 40%)",
+              "radial-gradient(circle at 20% 50%, rgba(37,99,235,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 40%)",
             pointerEvents: "none",
           }}
         />
@@ -73,9 +73,9 @@ export default async function HomePage() {
             <div
               style={{
                 display: "inline-flex", alignItems: "center", gap: "0.5rem",
-                background: "rgba(224,127,58,0.18)",
-                border: "1px solid rgba(224,127,58,0.32)",
-                color: "var(--clay-300)",
+                background: "rgba(37,99,235,0.2)",
+                border: "1px solid rgba(37,99,235,0.35)",
+                color: "#93c5fd",
                 fontSize: "0.7rem",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase",
@@ -86,7 +86,7 @@ export default async function HomePage() {
               <span
                 style={{
                   width: 6, height: 6, borderRadius: "50%",
-                  background: "#4ade80", display: "inline-block",
+                  background: "#60a5fa", display: "inline-block",
                 }}
                 aria-hidden="true"
               />
@@ -114,7 +114,7 @@ export default async function HomePage() {
             <p
               style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
-                color: "var(--clay-300)",
+                color: "#93c5fd",
                 fontSize: "clamp(1rem, 2.2vw, 1.35rem)",
                 fontStyle: "italic",
                 marginBottom: "1rem",
@@ -141,7 +141,7 @@ export default async function HomePage() {
               <Link
                 href="/projects"
                 style={{
-                  background: "var(--clay-400)",
+                  background: "#1d4ed8",
                   color: "#fff",
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 600,
@@ -150,7 +150,7 @@ export default async function HomePage() {
                   borderRadius: "0.6rem",
                   textDecoration: "none",
                   letterSpacing: "0.01em",
-                  boxShadow: "0 4px 20px rgba(224,127,58,0.4)",
+                  boxShadow: "0 4px 20px rgba(29,78,216,0.4)",
                   display: "inline-block",
                 }}
               >
@@ -187,7 +187,7 @@ export default async function HomePage() {
                 style={{
                   position: "absolute", inset: "-12px",
                   borderRadius: "50% 45% 55% 48% / 48% 52% 50% 54%",
-                  border: "2px solid rgba(224,127,58,0.3)",
+                  border: "2px solid rgba(37,99,235,0.25)",
                   animation: "spin 18s linear infinite",
                 }}
               />
@@ -265,7 +265,7 @@ export default async function HomePage() {
                   position: "absolute",
                   bottom: "1.5rem",
                   right: "-1rem",
-                  background: "var(--clay-400)",
+                  background: "#1d4ed8",
                   color: "#fff",
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 600,
@@ -274,7 +274,7 @@ export default async function HomePage() {
                   textTransform: "uppercase",
                   padding: "0.4rem 0.9rem",
                   borderRadius: "9999px",
-                  boxShadow: "0 4px 16px rgba(224,127,58,0.5)",
+                  boxShadow: "0 4px 16px rgba(29,78,216,0.4)",
                   whiteSpace: "nowrap",
                 }}
                 aria-hidden="true"
@@ -416,7 +416,7 @@ export default async function HomePage() {
             <div style={{ paddingLeft: "0.5rem" }}>
               <p
                 style={{
-                  color: "var(--clay-300)",
+                  color: "#93c5fd",
                   fontFamily: "'DM Sans', sans-serif",
                   fontSize: "0.7rem",
                   fontWeight: 600,
@@ -496,7 +496,7 @@ export default async function HomePage() {
             <Link
               href="/projects"
               style={{
-                color: "var(--forest-600)",
+                color: "#1d4ed8",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "0.875rem",
@@ -539,13 +539,13 @@ export default async function HomePage() {
                   aria-hidden="true"
                   style={{
                     width: 36, height: 36, borderRadius: "0.5rem",
-                    background: "var(--forest-50)",
-                    border: "1px solid var(--forest-100)",
+                    background: "#eff6ff",
+                    border: "1px solid #dbeafe",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0,
                     fontFamily: "'Playfair Display', Georgia, serif",
                     fontWeight: 700,
-                    color: "var(--forest-600)",
+                    color: "#1d4ed8",
                     fontSize: "0.95rem",
                   }}
                 >
@@ -625,7 +625,7 @@ export default async function HomePage() {
             <Link
               href="/news"
               style={{
-                color: "var(--forest-600)",
+                color: "#1d4ed8",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "0.875rem",
@@ -646,9 +646,9 @@ export default async function HomePage() {
           >
             {news.map((article, i) => {
               const gradients = [
-                "linear-gradient(135deg, var(--forest-700), var(--forest-500))",
-                "linear-gradient(135deg, var(--forest-800), var(--forest-600))",
-                "linear-gradient(135deg, var(--forest-900), var(--forest-700))",
+                "linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)",
+                "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
+                "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
               ];
               return (
                 <Link
@@ -760,7 +760,7 @@ export default async function HomePage() {
                     </p>
                     <p
                       style={{
-                        color: "var(--clay-400)",
+                        color: "#1d4ed8",
                         fontFamily: "'DM Sans', sans-serif",
                         fontWeight: 600,
                         fontSize: "0.8rem",
@@ -783,7 +783,7 @@ export default async function HomePage() {
       <section
         aria-labelledby="testimonials-heading"
         style={{
-          background: "var(--forest-800)",
+          background: "#0f172a",
           paddingTop: "5rem", paddingBottom: "5rem",
           position: "relative", overflow: "hidden",
         }}
@@ -793,12 +793,12 @@ export default async function HomePage() {
           style={{
             position: "absolute", inset: 0,
             backgroundImage:
-              "radial-gradient(circle at 10% 50%, rgba(224,127,58,0.06) 0%, transparent 60%)",
+              "radial-gradient(circle at 10% 50%, rgba(37,99,235,0.08) 0%, transparent 60%)",
             pointerEvents: "none",
           }}
         />
         <div className="container-site" style={{ position: "relative", zIndex: 1 }}>
-          <div className="divider" style={{ background: "var(--clay-400)" }} aria-hidden="true" />
+          <div className="divider" style={{ background: "#1d4ed8" }} aria-hidden="true" />
           <h2
             id="testimonials-heading"
             style={{
@@ -823,7 +823,7 @@ export default async function HomePage() {
                 style={{
                   background: "rgba(255,255,255,0.05)",
                   border: "1px solid rgba(255,255,255,0.08)",
-                  borderLeft: "4px solid var(--clay-400)",
+                  borderLeft: "4px solid #2563eb",
                   borderRadius: "0.875rem",
                   padding: "1.5rem",
                   margin: 0,
@@ -900,7 +900,7 @@ export default async function HomePage() {
             href="/contact"
             style={{
               display: "inline-block",
-              background: "var(--forest-600)",
+              background: "#1d4ed8",
               color: "#fff",
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,

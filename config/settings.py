@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-&bmie6uf!hta!0y&*ict%p-owj8glvwnkl$i*!dj4+pv-9(b5c")
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -90,7 +90,23 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
+    # Limit upload sizes at the API level too
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
 }
+
+# ─────────────────────────────────────────────
+# FILE UPLOAD LIMITS
+# Images  : 20 MB max (Pillow compresses after save)
+# Videos  : 10 MB max for direct uploads
+# General : 25 MB absolute ceiling — anything bigger must be a URL
+# ─────────────────────────────────────────────
+DATA_UPLOAD_MAX_MEMORY_SIZE   = 25 * 1024 * 1024   # 25 MB — Django form data limit
+FILE_UPLOAD_MAX_MEMORY_SIZE   = 25 * 1024 * 1024   # 25 MB — in-memory file buffer
+MAX_UPLOAD_SIZE               = 25 * 1024 * 1024   # used by custom validators
 
 # ─────────────────────────────────────────────
 # PASSWORD VALIDATION
@@ -115,9 +131,14 @@ USE_TZ        = True
 # ─────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Only include STATICFILES_DIRS if the folder actually exists locally
+# Use manifest storage only in production (Render runs collectstatic in build).
+# Locally DEBUG=True so we use the simple storage to avoid manifest errors.
+if DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 _static_dir = BASE_DIR / 'static'
 if _static_dir.exists():
     STATICFILES_DIRS = [_static_dir]
@@ -126,3 +147,25 @@ MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ─────────────────────────────────────────────
+# LOGGING — surface compression errors in Render logs
+# ─────────────────────────────────────────────
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'},
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'website': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

@@ -38,7 +38,7 @@ function FieldLabel({
     >
       {children}
       {required && (
-        <span style={{ color: "var(--clay-400)", marginLeft: "0.2rem" }} aria-hidden="true">
+        <span style={{ color: "#1d4ed8", marginLeft: "0.2rem" }} aria-hidden="true">
           *
         </span>
       )}
@@ -103,7 +103,7 @@ export default function ContactPage() {
       {/* Page header */}
       <div className="page-header">
         <div className="container-site" style={{ position: "relative", zIndex: 1 }}>
-          <div className="divider" style={{ background: "var(--clay-400)" }} aria-hidden="true" />
+          <div className="divider" style={{ background: "#1d4ed8" }} aria-hidden="true" />
           <h1
             style={{
               fontFamily: "'Playfair Display', Georgia, serif",
@@ -181,9 +181,9 @@ export default function ContactPage() {
                 <div
                   role="alert"
                   style={{
-                    background: "var(--forest-50)",
-                    border: "1.5px solid var(--forest-200)",
-                    borderLeft: "4px solid var(--forest-500)",
+                    background: "#eff6ff",
+                    border: "1.5px solid #bfdbfe",
+                    borderLeft: "4px solid #2563eb",
                     borderRadius: "0.625rem",
                     padding: "1rem 1.25rem",
                     marginBottom: "1.75rem",
@@ -201,7 +201,7 @@ export default function ContactPage() {
                     style={{ flexShrink: 0, marginTop: "0.05rem" }}
                     aria-hidden="true"
                   >
-                    <circle cx="9" cy="9" r="9" fill="var(--forest-500)" />
+                    <circle cx="9" cy="9" r="9" fill="#2563eb" />
                     <path
                       d="M5 9l3 3 5-5"
                       stroke="#fff"
@@ -215,7 +215,7 @@ export default function ContactPage() {
                       style={{
                         fontFamily: "'DM Sans', sans-serif",
                         fontWeight: 600,
-                        color: "var(--forest-700)",
+                        color: "#1e3a5f",
                         fontSize: "0.875rem",
                         marginBottom: "0.2rem",
                       }}
@@ -225,7 +225,7 @@ export default function ContactPage() {
                     <p
                       style={{
                         fontFamily: "'DM Sans', sans-serif",
-                        color: "var(--forest-600)",
+                        color: "#1d4ed8",
                         fontSize: "0.82rem",
                         lineHeight: 1.5,
                       }}
@@ -458,7 +458,7 @@ export default function ContactPage() {
                         color:
                           form.message.length < 20
                             ? "var(--stone-400)"
-                            : "var(--forest-500)",
+                            : "#2563eb",
                       }}
                     >
                       {form.message.length} chars
@@ -476,7 +476,7 @@ export default function ContactPage() {
                     background:
                       status === "submitting"
                         ? "var(--forest-400)"
-                        : "var(--forest-600)",
+                        : "#1d4ed8",
                     color: "#fff",
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600,
@@ -542,7 +542,7 @@ export default function ContactPage() {
               {/* About the office */}
               <div
                 style={{
-                  background: "var(--forest-900)",
+                  background: "#0f172a",
                   borderRadius: "1.25rem",
                   padding: "2rem",
                 }}
@@ -569,10 +569,10 @@ export default function ContactPage() {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path
                           d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                          stroke="var(--clay-300)"
+                          stroke="#93c5fd"
                           strokeWidth="1.5"
                         />
-                        <circle cx="12" cy="9" r="2.5" stroke="var(--clay-300)" strokeWidth="1.5" />
+                        <circle cx="12" cy="9" r="2.5" stroke="#93c5fd" strokeWidth="1.5" />
                       </svg>
                     ),
                   },
@@ -584,7 +584,7 @@ export default function ContactPage() {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path
                           d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"
-                          stroke="var(--clay-300)"
+                          stroke="#93c5fd"
                           strokeWidth="1.5"
                           strokeLinejoin="round"
                         />
@@ -629,7 +629,7 @@ export default function ContactPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
-                            color: "var(--clay-300)",
+                            color: "#93c5fd",
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: "0.85rem",
                             textDecoration: "none",
@@ -659,7 +659,7 @@ export default function ContactPage() {
                 style={{
                   background: "#fff",
                   border: "1.5px solid var(--stone-100)",
-                  borderLeft: "4px solid var(--clay-400)",
+                  borderLeft: "4px solid #1d4ed8",
                   borderRadius: "0.875rem",
                   padding: "1.25rem 1.375rem",
                 }}
@@ -691,8 +691,8 @@ export default function ContactPage() {
               {/* Pledge card */}
               <div
                 style={{
-                  background: "var(--forest-50)",
-                  border: "1.5px solid var(--forest-100)",
+                  background: "#eff6ff",
+                  border: "1.5px solid #dbeafe",
                   borderRadius: "0.875rem",
                   padding: "1.25rem 1.375rem",
                 }}
@@ -702,7 +702,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: "'Playfair Display', Georgia, serif",
                       fontStyle: "italic",
-                      color: "var(--forest-700)",
+                      color: "#1e3a5f",
                       fontSize: "0.95rem",
                       lineHeight: 1.7,
                       marginBottom: "0.75rem",
@@ -715,7 +715,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: "'DM Sans', sans-serif",
                       fontSize: "0.78rem",
-                      color: "var(--forest-500)",
+                      color: "#2563eb",
                       fontStyle: "normal",
                     }}
                   >
