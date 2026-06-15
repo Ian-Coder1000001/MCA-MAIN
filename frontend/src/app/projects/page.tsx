@@ -183,6 +183,21 @@ function ProjectModal({ project, categories, onClose }: { project: Project; cate
             </div>
           )}
 
+          {/* Gallery videos attached to this project */}
+          {Array.isArray((project as any).gallery) &&
+            (project as any).gallery
+              .filter((g: any) => g.type === "video" && g.url)
+              .map((vid: any, idx: number) => (
+                <div key={`vid-${idx}`} style={{ marginTop: "1.25rem" }}>
+                  <VideoSection
+                    url={vid.url}
+                    title={vid.caption || project.title}
+                    caption={vid.caption}
+                  />
+                </div>
+              ))
+          }
+
           {/* Share */}
           <div style={{
             marginTop: "1.5rem", paddingTop: "1.25rem",

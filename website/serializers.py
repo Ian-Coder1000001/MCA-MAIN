@@ -122,11 +122,12 @@ class ProjectImageSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     category    = CategorySerializer(read_only=True)
     images      = ProjectImageSerializer(many=True, read_only=True)
+    gallery     = GallerySerializer(many=True, read_only=True)
     cover_image = serializers.SerializerMethodField()
 
     class Meta:
         model  = Project
-        fields = ["id", "title", "slug", "description", "year", "cover_image", "images", "category", "is_featured"]
+        fields = ["id", "title", "slug", "description", "year", "cover_image", "images", "gallery", "category", "is_featured"]
 
     def get_cover_image(self, obj):
         return null_if_empty(obj.get_cover_url(self.context.get("request")))

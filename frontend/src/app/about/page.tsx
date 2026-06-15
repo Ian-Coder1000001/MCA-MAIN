@@ -135,55 +135,90 @@ export default async function AboutPage() {
               style={{ position: "sticky", top: "5rem" }}
             >
               {/* Photo */}
-              <div
-                style={{
-                  borderRadius: "1rem",
-                  overflow: "hidden",
-                  background: "#eff6ff",
-                  border: "1.5px solid var(--stone-100)",
-                  marginBottom: "1.5rem",
-                  aspectRatio: "3/4",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}
-              >
-                {about.photo_url ? (
-                  <LazyImage
-                    src={about.photo_url}
-                    alt="Elphas Shilosio"
-                    fill
-                    objectFit="cover"
-                    objectPosition="center top"
-                    priority
-                  />
-                ) : (
-                  <div
-                    style={{
-                      display: "flex", flexDirection: "column",
-                      alignItems: "center", gap: "0.75rem",
-                    }}
-                  >
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <circle cx="12" cy="8" r="4" stroke="var(--stone-200)" strokeWidth="1.5" />
-                      <path
-                        d="M4 20c0-4 3.6-7 8-7s8 3 8 7"
-                        stroke="var(--stone-200)"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <span
+                           {/* Photo — passport style circle, matches home page hero */}
+              <div style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "1.5rem",
+              }}>
+                <div style={{ position: "relative" }}>
+                  {about.photo_url ? (
+                    <img
+                      src={about.photo_url}
+                      alt="Elphas Shilosio"
+                      loading="eager"
                       style={{
-                        color: "var(--stone-300)",
-                        fontFamily: "'DM Sans', sans-serif",
+                        width: "clamp(200px, 28vw, 300px)",
+                        height: "clamp(200px, 28vw, 300px)",
+                        objectFit: "cover",
+                        objectPosition: "center top",   /* shows face + upper body */
+                        borderRadius: "50%",
+                        border: "4px solid #1d4ed8",
+                        boxShadow: "0 8px 48px rgba(29,78,216,0.2), 0 2px 8px rgba(0,0,0,0.08)",
+                        display: "block",
+                        background: "#eff6ff",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "clamp(200px, 28vw, 300px)",
+                        height: "clamp(200px, 28vw, 300px)",
+                        borderRadius: "50%",
+                        border: "4px solid #bfdbfe",
+                        background: "#eff6ff",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "0.75rem",
+                      }}
+                      aria-label="Upload candidate photo via admin panel"
+                    >
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" stroke="#93c5fd" strokeWidth="1.5" />
+                        <path
+                          d="M4 20c0-4 3.6-7 8-7s8 3 8 7"
+                          stroke="#93c5fd"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <span style={{
+                        color: "#93c5fd",
+                        fontFamily: "'Inter', sans-serif",
                         fontSize: "0.72rem",
                         textAlign: "center",
-                      }}
-                    >
-                      Upload via admin panel
-                    </span>
+                        lineHeight: 1.5,
+                        padding: "0 1rem",
+                      }}>
+                        Upload photo via<br />admin panel
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Murhanda Ward badge — same as home page */}
+                  <div style={{
+                    position: "absolute",
+                    bottom: "0.5rem",
+                    right: "-0.5rem",
+                    background: "#1d4ed8",
+                    color: "#fff",
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 600,
+                    fontSize: "0.68rem",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    padding: "0.35rem 0.8rem",
+                    borderRadius: "9999px",
+                    boxShadow: "0 4px 16px rgba(29,78,216,0.4)",
+                    whiteSpace: "nowrap",
+                  }} aria-hidden="true">
+                    Murhanda Ward
                   </div>
-                )}
+                </div>
               </div>
+
 
               {/* Quick facts card */}
               <div

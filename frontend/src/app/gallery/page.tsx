@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { api } from "@/lib/api";
 import { mockGallery } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
+import { VideoEmbed } from "@/components/ui/VideoEmbed";
 import type { GalleryItem } from "@/types";
 
 const ALL_TAG = "all";
@@ -428,14 +429,9 @@ export default function GalleryPage() {
                         background: "#18181b", border: "1.5px solid #27272a",
                         boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
                       }}>
-                        <div style={{ position: "relative", paddingBottom: "56.25%" }}>
+                        <div style={{ position: "relative", paddingBottom: "56.25%", background: "#0c0c0c" }}>
                           {item.url ? (
-                            <video src={item.url} controls preload="metadata" style={{
-                              position: "absolute", inset: 0,
-                              width: "100%", height: "100%", objectFit: "cover",
-                            }}>
-                              Your browser does not support the video tag.
-                            </video>
+                            <VideoEmbed url={item.url} title={item.caption || "Video"} />
                           ) : (
                             <div style={{
                               position: "absolute", inset: 0,

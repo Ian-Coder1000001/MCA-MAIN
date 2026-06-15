@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { mockNews } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
 import { ShareButton } from "@/components/ui/ShareButton";
+import { VideoSection } from "@/components/ui/VideoSection";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -249,8 +250,8 @@ export default async function NewsArticlePage({ params }: Props) {
           ) : (
             <p
               style={{
-                fontFamily: "'DM Sans', sans-serif",
-                color: "var(--stone-400)",
+                fontFamily: "'Inter', sans-serif",
+                color: "#a1a1aa",
                 fontSize: "0.9rem",
                 fontStyle: "italic",
               }}
@@ -258,6 +259,21 @@ export default async function NewsArticlePage({ params }: Props) {
               Full article body will appear here once added via the admin panel.
             </p>
           )}
+
+          {/* Gallery videos attached to this article */}
+          {Array.isArray((article as any).gallery) &&
+            (article as any).gallery
+              .filter((g: any) => g.type === "video" && g.url)
+              .map((vid: any, idx: number) => (
+                <div key={`vid-${idx}`} style={{ marginTop: "2rem" }}>
+                  <VideoSection
+                    url={vid.url}
+                    title={vid.caption || article.title}
+                    caption={vid.caption}
+                  />
+                </div>
+              ))
+          }
 
           {/* Back link + Share row */}
           <div style={{

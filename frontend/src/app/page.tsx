@@ -28,30 +28,21 @@ export default async function HomePage() {
         aria-label="Hero"
         style={{
           background:
-            "linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1e3a5f 70%, #1d4ed8 100%)",
+            "#ffffff",
           minHeight: "clamp(520px, 85vh, 780px)",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Subtle radial overlay */}
+        {/* Light blue tint on right side */}
         <div
           aria-hidden="true"
           style={{
-            position: "absolute", inset: 0,
-            backgroundImage:
-              "radial-gradient(circle at 20% 50%, rgba(37,99,235,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 40%)",
+            position: "absolute", top: 0, right: 0,
+            width: "50%", height: "100%",
+            background: "linear-gradient(135deg, #f8faff 0%, #eff6ff 100%)",
+            clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
             pointerEvents: "none",
-          }}
-        />
-        {/* Diagonal accent */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute", bottom: 0, right: 0,
-            width: "45%", height: "100%",
-            background: "rgba(255,255,255,0.025)",
-            clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)",
           }}
         />
 
@@ -73,11 +64,11 @@ export default async function HomePage() {
             <div
               style={{
                 display: "inline-flex", alignItems: "center", gap: "0.5rem",
-                background: "rgba(37,99,235,0.2)",
-                border: "1px solid rgba(37,99,235,0.35)",
-                color: "#93c5fd",
+                background: "#eff6ff",
+                border: "1px solid #bfdbfe",
+                color: "#1d4ed8",
                 fontSize: "0.7rem",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase",
                 padding: "0.35rem 0.9rem", borderRadius: "9999px",
                 marginBottom: "1.5rem",
@@ -86,7 +77,7 @@ export default async function HomePage() {
               <span
                 style={{
                   width: 6, height: 6, borderRadius: "50%",
-                  background: "#60a5fa", display: "inline-block",
+                  background: "#16a34a", display: "inline-block",
                 }}
                 aria-hidden="true"
               />
@@ -96,7 +87,7 @@ export default async function HomePage() {
             <h1
               style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
-                color: "#ffffff",
+                color: "#0f172a",
                 fontSize: "clamp(2.4rem, 5vw, 4rem)",
                 fontWeight: 700,
                 lineHeight: 1.1,
@@ -106,7 +97,7 @@ export default async function HomePage() {
             >
               {hero.candidate_name.split(" ")[0]}
               <br />
-              <span style={{ color: "rgba(255,255,255,0.9)" }}>
+              <span style={{ color: "#1d4ed8" }}>
                 {hero.candidate_name.split(" ").slice(1).join(" ")}
               </span>
             </h1>
@@ -114,7 +105,7 @@ export default async function HomePage() {
             <p
               style={{
                 fontFamily: "'Playfair Display', Georgia, serif",
-                color: "#93c5fd",
+                color: "#1d4ed8",
                 fontSize: "clamp(1rem, 2.2vw, 1.35rem)",
                 fontStyle: "italic",
                 marginBottom: "1rem",
@@ -159,8 +150,8 @@ export default async function HomePage() {
               <Link
                 href="/about"
                 style={{
-                  border: "1.5px solid rgba(255,255,255,0.28)",
-                  color: "rgba(255,255,255,0.9)",
+                  border: "1.5px solid #e4e4e7",
+                  color: "#27272a",
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "0.9rem",
@@ -181,25 +172,7 @@ export default async function HomePage() {
             style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
           >
             <div style={{ position: "relative" }}>
-              {/* Decorative rings */}
-              <div
-                aria-hidden="true"
-                style={{
-                  position: "absolute", inset: "-12px",
-                  borderRadius: "50% 45% 55% 48% / 48% 52% 50% 54%",
-                  border: "2px solid rgba(37,99,235,0.25)",
-                  animation: "spin 18s linear infinite",
-                }}
-              />
-              <div
-                aria-hidden="true"
-                style={{
-                  position: "absolute", inset: "-24px",
-                  borderRadius: "45% 55% 48% 52% / 52% 48% 56% 44%",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  animation: "spin 28s linear infinite reverse",
-                }}
-              />
+
 
               {hero.photo_url ? (
                 <img
@@ -207,26 +180,25 @@ export default async function HomePage() {
                   alt={`${hero.candidate_name} — MCA Candidate, Murhanda Ward`}
                   loading="eager"
                   style={{
-                    width: "clamp(220px, 30vw, 360px)",
-                    height: "clamp(280px, 38vw, 460px)",
+                    width: "clamp(240px, 32vw, 380px)",
+                    height: "clamp(240px, 32vw, 380px)",
                     objectFit: "cover",
                     objectPosition: "center top",
-                    borderRadius: "50% 45% 55% 48% / 48% 52% 50% 54%",
-                    border: "4px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+                    borderRadius: "50%",
+                    border: "4px solid #1d4ed8",
+                    boxShadow: "0 8px 48px rgba(29,78,216,0.2), 0 2px 8px rgba(0,0,0,0.08)",
                     display: "block",
+                    background: "#eff6ff",
                   }}
                 />
               ) : (
                 <div
                   style={{
-                    width: "clamp(220px, 30vw, 360px)",
-                    height: "clamp(280px, 38vw, 460px)",
-                    borderRadius: "50% 45% 55% 48% / 48% 52% 50% 54%",
-                    border: "4px solid rgba(255,255,255,0.12)",
-                    boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
-                    background:
-                      "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)",
+                    width: "clamp(240px, 32vw, 380px)",
+                    height: "clamp(240px, 32vw, 380px)",
+                    borderRadius: "50%",
+                    border: "4px solid #bfdbfe",
+                    background: "#eff6ff",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -236,10 +208,10 @@ export default async function HomePage() {
                   aria-label="Upload candidate photo via admin panel"
                 >
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                    <circle cx="12" cy="8" r="4" stroke="#93c5fd" strokeWidth="1.5" />
                     <path
                       d="M4 20c0-4 3.6-7 8-7s8 3 8 7"
-                      stroke="rgba(255,255,255,0.2)"
+                      stroke="#93c5fd"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
@@ -263,8 +235,8 @@ export default async function HomePage() {
               <div
                 style={{
                   position: "absolute",
-                  bottom: "1.5rem",
-                  right: "-1rem",
+                  bottom: "0.5rem",
+                  right: "-0.5rem",
                   background: "#1d4ed8",
                   color: "#fff",
                   fontFamily: "'DM Sans', sans-serif",
@@ -291,8 +263,9 @@ export default async function HomePage() {
           aria-label="Key statistics"
           style={{
             borderTop: "1px solid rgba(255,255,255,0.1)",
-            background: "rgba(0,0,0,0.3)",
-            backdropFilter: "blur(8px)",
+            background: "#f8faff",
+            backdropFilter: "none",
+            borderTop: "1px solid #e4e4e7",
           }}
         >
           <div
@@ -308,8 +281,8 @@ export default async function HomePage() {
                 style={{
                   padding: "1.25rem 1rem",
                   textAlign: "center",
-                  borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                  borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
+                  borderRight: i % 2 === 0 ? "1px solid #e4e4e7" : "none",
+                  borderBottom: i < 2 ? "1px solid #e4e4e7" : "none",
                 }}
               >
                 <p
@@ -326,7 +299,7 @@ export default async function HomePage() {
                 </p>
                 <p
                   style={{
-                    color: "rgba(255,255,255,0.5)",
+                    color: "#71717a",
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: "0.75rem",
                   }}
