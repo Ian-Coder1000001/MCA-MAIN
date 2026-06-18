@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { mockProjects, mockCategories } from "@/lib/mock";
 import { LazyImage } from "@/components/ui/LazyImage";
 import { ShareButton } from "@/components/ui/ShareButton";
+import { VideoSection } from "@/components/ui/VideoSection";
 import type { Project, Category } from "@/types";
 
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
