@@ -547,6 +547,9 @@ video {
 .visible{
   visibility: visible;
 }
+.invisible{
+  visibility: hidden;
+}
 .fixed{
   position: fixed;
 }
@@ -939,8 +942,11 @@ p { line-height: 1.75; }
 }
 
 /* ── Stats grid ───────────────────────────────────────────────────────────── */
+.stats-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
 @media (min-width: 640px) {
-  .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
 }
 
 /* ── Video layout ─────────────────────────────────────────────────────────── */
